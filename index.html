@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ОТЧЕТ</title>
+    <link rel="stylesheet" href="container.css">
+    <script src="//api.bitrix24.com/api/v1/"></script>
+    <!-- <script>void BX24.fitWindow();</script> -->
+    <script src="funcDate.js"></script>
+    <script src="function.js"></script>
+</head>
+<body>
+    <div class="filter-area">
+        <label for="filter-area-select-depart" class="filter-area-depart"> Отдел : </label>
+        <select name="filter-area-select-depart" calss="filter-area-depart" id="flt_sel_dep" size="1">
+            <option class="flt_depart_all" value="all">Все</option>
+        </select>
+        <label for="filter-area-select-employee" class="filter-area-empl"> Сотрудник : </label>
+        <select name="filter-area-select-employee" calss="filter-area-empl" id="flt_sel_empl" size="1">
+            <option class="flt_empl_all" value="all">Все</option>
+        </select>
+        <label for="startDate">Дата с </label>
+        <input type="date" name="startDate" class="filter-area-startdate" id="flt_dt_start">
+        <label for="endDate"> по </label>
+        <input type="date" name="endDate" class="filter-area-enddate" id="flt_dt_end">
+        <input type="button" value="Применить" id="btnApplyFilter">
+        <input type="button" value="Очистить" id="btnClearFilter">
+        <label><input type="checkbox" name="ShowHideEmpty" id="cbxShowHide" onchange="showHide()">Показать/Скрыть пустые строки таблицы</label>
+        <p style="text-align: right; font-size: x-small;">Для просмотра детализации дождитесь полной загрузки данных</p>
+        <p style="text-align: left; font-size: x-small;">В режиме БЕТА-ТЕСТИРОВАНИЯ доступна только вкладка ДЕЛА</p>
+    </div>
+    <div class="container">
+        <div class="tabs">
+			<input id="tab1" type="radio" name="tabs" checked>
+            <label for="tab1" title="ДЕЛА">ДЕЛА (beta)</label>
+            <input id="tab2" type="radio" name="tabs">
+            <label for="tab2" title="ЗАДАЧИ">ЗАДАЧИ</label>
+            <input id="tab3" type="radio" name="tabs">
+			<label for="tab3" title="ЛИДЫ">ЛИДЫ</label>
+			<input id="tab4" type="radio" name="tabs">
+            <label for="tab4" title="СДЕЛКИ">СДЕЛКИ</label>
+			<input id="tab5" type="radio" name="tabs">
+            <label for="tab5" title="АКТИВНОСТЬ">АКТИВНОСТЬ</label>
+            <!--<input id="tab5" type="radio" name="tabs">
+            <label for="tab5" title="Настройки">НАСТРОЙКА</label>-->
+            <input id="tab6" type="radio" name="tabs">
+			<label for="tab6" title="ПАМЯТКА">ПАМЯТКА</label>
+            <input id="tab7" type="radio" name="tabs">
+            <label for="tab7" title="КОНТАКТЫ">ЗАКАЗАТЬ ИНДИВИДУАЛЬНЫЙ ОТЧЕТ</label>            
+
+            <section id="content-tab1"> <!--Дела-->
+                <table class="content-tab1" width="100%">
+                    <thead class="tab1-table-head">
+                    </thead>
+                    <tbody class="tab1-table-body">
+                    </tbody>
+                </table>
+            </section>
+<!--             <section id="content-tab2"> Задачи
+            </section>
+            <section id="content-tab3"> ЛИДы
+                <table class="otchet" cellpadding="3px;" width="100%" height="100%" border="0" bordercolor="#FF0000" id="tblLeads">
+                    <caption>АНАЛИТИКА ПО ЛИДам ЗА ТЕКУЩИЙ МЕСЯЦ</caption>
+                </table>
+            </section>
+            <section id="content-tab4"> Сделки
+                <table class="otchet" cellpadding="3px;" width="100%" height="100%" border="0" bordercolor="#FF0000" id="tblDeals">
+                    <caption>АНАЛИТИКА ПО СДЕЛКАМ ЗА ТЕКУЩИЙ МЕСЯЦ</caption>
+                </table>
+            </section>
+            <section id="content-tab5"> Активность
+                <table id="content-tab5" class = "nomodal" width="100%">
+                    <thead id="tab0-table-head" class="nomodal">
+                    </thead>
+                    <tbody id="tab0-table-body" class="nomodal">
+                    </tbody>
+                </table>
+            </section>
+ -->            <!--<section id="content-tab5">--> <!--Сделки-->
+            <!--</section>-->
+<!--             <section id="content-tab6"> ПАМЯТКА
+                <table style="width: 50%; margin: auto;">
+                    <tr>
+                        <td style="text-align: center;">ПАМЯТКА</td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <p>Мы реализовали вывод всех дел, лидов, сделок по сотрудникам в текущем месяце, с 1 по 30 или 31 число.</p>
+                        <p>ЛИДЫ и СДЕЛКИ реализованы с подсчетом конверсии.</p>
+                        <p>Фильтр по датам будет реализован в версии ОТЧЕТЫ-PRO (будет выпущена чуть позже)</p>
+                        <p>В следующих обновлениях будем добавлять новый функционал</p>
+                        <br>
+                        <p style="text-align: center;">!! ВНИМАНИЕ !!</p>
+                        <p style="text-align: center;">Механика работы отчета по ЛИДАМ.</p>
+                        <p>1. Графа "Конверсия" - считается по формуле:</p>
+                        <p style="text-align: center;">"Конверсия" = "Статус Конвертирован" / "Создано за период" * 100%</p>
+                        <br>
+                        <p>2. Графа "Создано за период" - отображаются все Лиды с датой создания в текущем месяце, с 1 по 30 или 31 число. </p>
+                        <p>3. Графы с активными статусами ЛИДа - отображают ВСЕ текущие активные ЛИДы без привязки к каким либо датам.</p>
+                        <br>
+                        <p style="text-align: center;">Механика работы отчета по СДЕЛКАМ.</p>
+                        <p>1. Графа "Конверсия" - считается по формуле:</p>
+                        <p style="text-align: center;">"Конверсия" = "Стадия Успешна" / "Создано за период" * 100%</p>
+                        <br>
+                        <p>2. Графа "Создано за период" - отображаются все СДЕЛКИ с датой создания в текущем месяце, с 1 по 30 или 31 число.</p>
+                        <p>3. Графы с активными стадиями СДЕЛКИ - отображают ВСЕ текущие активные СДЕЛКИ без привязки к каким либо датам.</p>
+                        <br>
+                        </td>
+                    </tr>
+                </table>
+            </section>-->
+            <section id="content-tab7"> <!--КОНТАКТЫ-->
+                <table>
+                    <tr>
+                        <td rowspan="5" width="250px"><img style="display:block;max-width:100%;width:200px;height:100px;" src="logo.svg" alt="РУССКИЙ РОБОТ"></td>
+                    </tr>
+					<tr>
+						<td><a href="https://auth2.bitrix24.net/oauth/select/?preset=im&IM_DIALOG=networkLinesa1c95f5f7e249ee2fc942e1e7f0a579f" target="_blank"> НАПИСАТЬ РАЗРАБОТЧИКУ В ЧАТ </a></td>
+						<td></td>
+					</tr>
+					<tr> 
+						<td><a href="mailto:russian-robot@yandex.ru" target="_blank">ПОЧТА: russian-robot@yandex.ru</a></td>
+						<td></td>
+					</tr>
+					<tr>
+                        <td><a href="https://ignatov.bitrix24.site/" target="_blank">САЙТ : ignatov.bitrix24.site </a></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://vk.com/bitrix_24_ru" target="_blank">VK : Техническая поддержка Битрикс24. Русский Робот</a></td>
+                        <td></td>
+                    </tr>
+                </table>
+                <table>
+                    <caption>НАШИ ПОЛЕЗНЫЕ И УМНЫЕ ПРИЛОЖЕНИЯ:</caption>
+                    <tr style="background-color: SandyBrown; text-align: center" >
+                        <td style="align=left; pading-left=10px"><big>РУССКИЙ РОБОТ - БИЗНЕС ПРОЦЕССЫ</big></td>
+                        <td><a href="https://www.bitrix24.ru/apps/?app=Sirius_24.rr" target="_blank">УСТАНОВИТЬ</a></td>
+                    </tr>
+                    <tr></tr>
+                    <tr style="background-color:SandyBrown; text-align: center">
+                        <td><big>УМНЫЙ РОБОТ PRO - УБОЙНЫЕ ТРИГГЕРЫ</big></td>
+                        <td><a href="https://www.bitrix24.ru/apps/?app=rusrobot.umnyirobot" target="_blank">УСТАНОВИТЬ</a></td>
+                    </tr>
+                    <tr></tr>
+                    <tr style="background-color:SandyBrown; text-align: center">
+                        <td><big>УМНЫЙ РОБОТ LITE - УБОЙНЫЕ ТРИГГЕРЫ</big></td>
+                        <td><a href="https://www.bitrix24.ru/apps/?app=rusrobot.umlite" target="_blank">УСТАНОВИТЬ</a></td>
+                    </tr>
+                    <tr></tr>
+                    <tr style="background-color:SandyBrown; text-align: center">
+                        <td><big>РУССКИЙ РОБОТ - БЛОКИРОВКА ПОЛЕЙ</big></td>
+                        <td><a href="https://www.bitrix24.ru/apps/?app=rusrobot.bf" target="_blank">УСТАНОВИТЬ</a></td>
+                    </tr>
+                    <tr></tr>
+                    <tr style="background-color:SandyBrown; text-align: center">
+                        <td><big>РУССКИЙ РОБОТ - РУССКАЯ АНАЛИТИКА</big></td>
+                        <td><a href="https://vk.com/bitrix_24_ru" target="_blank">ГОТОВИТСЯ к ВЫПУСКУ</a></td>
+                    </tr>
+                    <tr></tr>
+                    <tr style="background-color:SandyBrown; text-align: center">
+                        <td><big>РУССКИЙ РОБОТ - КАРТОЧКА ЗВОНКА</big></td>
+                        <td><a href="https://vk.com/bitrix_24_ru" target="_blank">ГОТОВИТСЯ к ВЫПУСКУ</a></td>
+                    </tr>
+					<tr style="background-color:SandyBrown; text-align: center">
+                        <td><big>РУССКИЙ РОБОТ - ГОЛОСОВОЕ УПРАВЛЕНИЕ</big></td>
+                        <td><a href="https://vk.com/bitrix_24_ru" target="_blank">ГОТОВИТСЯ к ВЫПУСКУ</a></td>
+                    </tr>
+					<tr style="background-color:SandyBrown; text-align: center">
+                        <td><big>РУССКИЙ РОБОТ - УМНЫЕ ПОЛЯ</big></td>
+                        <td><a href="https://vk.com/bitrix_24_ru" target="_blank">ГОТОВИТСЯ к ВЫПУСКУ</a></td>
+                    </tr>
+                </table>
+            </section>
+        </div>
+    </div>
+    <div class="modal" id="modal_detail">
+        <div class="modal__content">
+            <div class="modal__head">
+                <span class="modal__close">&times</span>
+                <h3 class="modal__title"></h3>
+            </div>
+            <div class="modal__body">
+<!--                 <table class="modal__table">
+                    <thead id="thtable" class="modal__table-head"></thead>
+                    <tbody id="tbtable" class="modal__table-body"></tbody>
+                </table> -->
+            </div>
+            <div class="modal__footer"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal_alert" >
+        <div class="modal__content">
+            <div class="modal__head">
+                <span class="modal__close">&times</span>
+                <h3>Внимание!</h3>
+            </div>
+            <div class="modal__body"></div>
+            <div class="modal__footer"></div>
+        </div>
+    </div>
+    <div class="modal" id="modal_view" >
+        <div class="modal__content">
+            <span class="modal__close">&times</span>
+            <div class="modal__body"></div>
+        </div>
+    </div>
+<!--     <div class="modal" id="modal_view" >
+        <div class="modal__content">
+            <div class="modal__head">
+                <span class="modal__close">&times</span>
+            </div>
+            <div class="modal__body"></div>
+            <div class="modal__footer"></div>
+        </div>
+    </div>
+ -->
+    <script>
+        void BX24.resizeWindow(1500,5000);
+
+        window.onload = function() {
+            localStorage.clear();
+            Proba();
+        }
+    </script>
+</body>
+</html>
